@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commandez sur WhatsApp</title>
+<style>
+:root{--vert:#2e7d32;--vert-clair:#e8f5e9;--texte:#1b2a1b;--gris:#6b7a6b;--bord:#d7e3d7}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f6faf6;color:var(--texte)}
+header{background:var(--vert);color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:22px}
+header p{margin:4px 0 0;font-size:14px;opacity:.9}
+main{max-width:720px;margin:0 auto;padding:16px 16px 120px}
+h2{font-size:18px;margin:24px 0 10px}
+.grille{display:grid;gap:12px}
+.carte{background:#fff;border:1px solid var(--bord);border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center}
+.emoji{font-size:38px;width:56px;height:56px;background:var(--vert-clair);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.info{flex:1;min-width:0}
+.info h3{margin:0 0 2px;font-size:16px}
+.info p{margin:0;font-size:13px;color:var(--gris)}
+.prix{font-weight:700;color:var(--vert);margin-top:4px}
+button{font:inherit;cursor:pointer}
+.btn-add{background:var(--vert);color:#fff;border:0;border-radius:8px;padding:8px 12px;font-weight:600;font-size:14px}
+.qte{display:flex;align-items:center;gap:8px}
+.qte button{width:32px;height:32px;border-radius:8px;border:1px solid var(--vert);background:#fff;color:var(--vert);font-size:18px;line-height:1}
+.panier,.form{background:#fff;border:1px solid var(--bord);border-radius:12px;padding:14px}
+.ligne{display:flex;justify-content:space-between;gap:8px;padding:6px 0;font-size:15px}
+.ligne.total{border-top:2px solid var(--vert);margin-top:6px;padding-top:10px;font-weight:700;font-size:18px;color:var(--vert)}
+.vide{color:var(--gris);text-align:center;padding:10px}
+label{display:block;font-size:14px;font-weight:600;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--bord);border-radius:8px;font:inherit;background:#fff}
+.note{font-size:13px;color:var(--gris);margin-top:8px}
+.btn-wa{width:100%;margin-top:14px;background:#25d366;color:#fff;border:0;border-radius:10px;padding:14px;font-size:17px;font-weight:700}
+.erreur{color:#c62828;font-size:14px;margin-top:8px;min-height:18px}
+.msg{text-align:center;color:var(--gris);padding:20px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;position:sticky;top:0;background:#f6faf6;z-index:5}
+.chip{flex-shrink:0;border:1px solid var(--vert);background:#fff;color:var(--vert);border-radius:20px;padding:7px 14px;font-weight:600;font-size:14px;white-space:nowrap}
+.chip.on{background:var(--vert);color:#fff}
+.cat-titre{font-size:16px;font-weight:700;color:var(--vert);margin:14px 0 2px}
+.barre{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bord);padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.barre a{background:var(--vert);color:#fff;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="titre">Chargement…</h1>
+  <p id="accueil"></p>
+</header>
+
+<main>
+  <h2>Nos produits</h2>
+  <div class="cats" id="cats"></div>
+  <div class="grille" id="catalogue"><div class="msg">Chargement du catalogue…</div></div>
+
+  <h2 id="panier-titre">Votre panier</h2>
+  <div class="panier" id="panier"></div>
+
+  <h2>Vos informations</h2>
+  <div class="form">
+    <label for="nom">Nom</label>
+    <input id="nom" autocomplete="name" placeholder="Ex. Marie Kabongo">
+    <label for="tel">Téléphone</label>
+    <input id="tel" type="tel" autocomplete="tel" placeholder="Ex. 0812345678">
+    <label for="zone">Zone de livraison</label>
+    <select id="zone"></select>
+    <label for="adresse">Adresse précise</label>
+    <textarea id="adresse" rows="2" placeholder="Avenue, numéro, point de repère"></textarea>
+    <label for="remarque">Remarque (facultatif)</label>
+    <textarea id="remarque" rows="2" placeholder="Ex. sans piment, livrer après 18h"></textarea>
+    <p class="note">💵 Paiement à la livraison (cash ou Mobile Money) après confirmation sur WhatsApp.</p>
+    <div class="erreur" id="erreur"></div>
+    <button class="btn-wa" id="envoyer">Commander sur WhatsApp</button>
+  </div>
+</main>
+
+<div class="barre">
+  <div><strong id="barre-total">0 $</strong><br><small id="barre-nb">Panier vide</small></div>
+  <a href="#panier-titre">Voir le panier</a>
+</div>
+
+<script>
+/* ===== SEULE LIGNE À MODIFIER =====
+   Collez ici l'identifiant de votre Google Sheet
+   (la partie entre /d/ et /edit dans l'adresse du Sheet). */
+const SHEET_ID = "1JC8d68NzRRB1JmLgfy0-xU_aFyXHa-TZ6IAw_tIGbAY";
+/* =================================== */
+
+let CFG = { boutique: "Ma boutique", accueil: "", whatsapp: "", devise: "$", frais_plateforme: 0, script_url: "" };
+let PRODUITS = [], ZONES = [], CATS = [], CAT = "Tous";
+let panier = {};
+try { panier = JSON.parse(localStorage.getItem("panier_boutique") || "{}"); } catch (e) { panier = {}; }
+
+const $ = id => document.getElementById(id);
+const nombre = v => parseFloat(String(v).replace(",", ".").replace(/[^\d.]/g, ""));
+const fmt = n => (Math.round(n * 100) / 100).toString().replace(".", ",") + " " + CFG.devise;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function parseCSV(t) {
+  const rows = []; let r = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { r.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && t[i + 1] === "\n") i++; r.push(f); rows.push(r); r = []; f = ""; }
+    else f += c;
+  }
+  if (f !== "" || r.length) { r.push(f); rows.push(r); }
+  return rows;
+}
+
+async function lireFeuille(nom) {
+  const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&sheet=" + encodeURIComponent(nom);
+  const rep = await fetch(url);
+  if (!rep.ok) throw new Error("Feuille " + nom + " introuvable");
+  return parseCSV(await rep.text());
+}
+
+async function charger() {
+  try {
+    const [conf, prods, zones] = await Promise.all([lireFeuille("Config"), lireFeuille("Produits"), lireFeuille("Zones")]);
+    conf.forEach(r => { if (r[0]) CFG[r[0].trim().toLowerCase()] = (r[1] || "").trim(); });
+    CFG.frais_plateforme = nombre(CFG.frais_plateforme) || 0;
+    PRODUITS = prods.map(r => ({ id: (r[0] || "").trim(), cat: (r[1] || "Autres").trim() || "Autres", emoji: r[2] || "🍽️", nom: (r[3] || "").trim(), desc: r[4] || "", prix: nombre(r[5]), dispo: (r[6] || "oui").trim().toLowerCase() }))
+      .filter(p => p.id && p.nom && !isNaN(p.prix) && p.dispo !== "non");
+    ZONES = zones.map(r => ({ nom: (r[0] || "").trim(), frais: nombre(r[1]) })).filter(z => z.nom && !isNaN(z.frais));
+    if (!PRODUITS.length || !ZONES.length) throw new Error("Données vides");
+    CATS = []; PRODUITS.forEach(p => { if (CATS.indexOf(p.cat) < 0) CATS.push(p.cat); });
+    document.title = CFG.boutique;
+    $("titre").textContent = CFG.boutique;
+    $("accueil").textContent = CFG.accueil;
+    $("zone").innerHTML = ZONES.map((z, i) => `<option value="${i}">${esc(z.nom)} (+${fmt(z.frais)})</option>`).join("");
+    Object.keys(panier).forEach(id => { if (!PRODUITS.some(p => p.id === id)) delete panier[id]; });
+    rendreCats(); rendreCatalogue(); rendre();
+  } catch (e) {
+    $("titre").textContent = "Boutique indisponible";
+    $("catalogue").innerHTML = '<div class="msg">Impossible de charger le catalogue. Réessayez dans un instant.</div>';
+  }
+}
+
+function sauver() { try { localStorage.setItem("panier_boutique", JSON.stringify(panier)); } catch (e) {} }
+function changer(id, d) { panier[id] = (panier[id] || 0) + d; if (panier[id] <= 0) delete panier[id]; sauver(); rendre(); }
+function lignes() { return PRODUITS.filter(p => panier[p.id]).map(p => ({ ...p, qte: panier[p.id] })); }
+
+function totaux() {
+  const sous = lignes().reduce((s, l) => s + l.prix * l.qte, 0);
+  const zone = ZONES[$("zone").value] || ZONES[0] || { nom: "", frais: 0 };
+  const livraison = sous > 0 ? zone.frais : 0;
+  const plateforme = sous > 0 ? CFG.frais_plateforme : 0;
+  return { sous, zone, livraison, plateforme, total: sous + livraison + plateforme };
+}
+
+function carte(p) {
+  return `
+    <div class="carte">
+      <div class="emoji">${esc(p.emoji)}</div>
+      <div class="info"><h3>${esc(p.nom)}</h3><p>${esc(p.desc)}</p><div class="prix">${fmt(p.prix)}</div></div>
+      <div class="qte" id="q${esc(p.id)}"></div>
+    </div>`;
+}
+
+function rendreCats() {
+  const toutes = ["Tous"].concat(CATS);
+  $("cats").innerHTML = toutes.map(c => `<button class="chip${c === CAT ? " on" : ""}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+}
+
+function rendreCatalogue() {
+  if (CAT === "Tous") {
+    $("catalogue").innerHTML = CATS.map(c =>
+      `<div class="cat-titre">${esc(c)}</div>` + PRODUITS.filter(p => p.cat === c).map(carte).join("")).join("");
+  } else {
+    $("catalogue").innerHTML = PRODUITS.filter(p => p.cat === CAT).map(carte).join("");
+  }
+}
+
+function majQte(p) {
+  const q = panier[p.id] || 0, el = $("q" + p.id);
+  if (!el) return;
+  el.innerHTML = q
+    ? `<button onclick="changer('${esc(p.id)}',-1)">−</button><strong>${q}</strong><button onclick="changer('${esc(p.id)}',1)">+</button>`
+    : `<button class="btn-add" onclick="changer('${esc(p.id)}',1)">Ajouter</button>`;
+}
+
+function rendre() {
+  PRODUITS.forEach(majQte);
+  const ls = lignes(), t = totaux();
+  if (!ls.length) {
+    $("panier").innerHTML = '<div class="vide">Votre panier est vide</div>';
+  } else {
+    $("panier").innerHTML =
+      ls.map(l => `<div class="ligne"><span>${l.qte} × ${esc(l.nom)}</span><span>${fmt(l.prix * l.qte)}</span></div>`).join("") +
+      `<div class="ligne"><span>Sous-total</span><span>${fmt(t.sous)}</span></div>` +
+      `<div class="ligne"><span>Livraison (${esc(t.zone.nom)})</span><span>${fmt(t.livraison)}</span></div>` +
+      (CFG.frais_plateforme ? `<div class="ligne"><span>Frais de plateforme</span><span>${fmt(t.plateforme)}</span></div>` : "") +
+      `<div class="ligne total"><span>TOTAL</span><span>${fmt(t.total)}</span></div>`;
+  }
+  const nb = ls.reduce((s, l) => s + l.qte, 0);
+  $("barre-total").textContent = fmt(t.total);
+  $("barre-nb").textContent = nb ? nb + " article(s)" : "Panier vide";
+}
+
+function envoyer() {
+  const ls = lignes(), t = totaux();
+  const nom = $("nom").value.trim(), tel = $("tel").value.trim(), adr = $("adresse").value.trim(), rem = $("remarque").value.trim();
+  const err = $("erreur");
+  if (!ls.length) { err.textContent = "Ajoutez au moins un produit au panier."; return; }
+  if (!nom || !tel || !adr) { err.textContent = "Merci de remplir le nom, le téléphone et l'adresse."; return; }
+  if (!CFG.whatsapp) { err.textContent = "Numéro WhatsApp non configuré."; return; }
+  err.textContent = "";
+
+  const num = "CMD-" + new Date().toISOString().slice(5, 16).replace(/[-:T]/g, "");
+  let m = `*Nouvelle commande ${CFG.boutique}* (${num})\n\n`;
+  m += ls.map(l => `• ${l.qte} × ${l.nom} : ${fmt(l.prix * l.qte)}`).join("\n");
+  m += `\n\nSous-total : ${fmt(t.sous)}`;
+  m += `\nLivraison (${t.zone.nom}) : ${fmt(t.livraison)}`;
+  if (CFG.frais_plateforme) m += `\nFrais de plateforme : ${fmt(t.plateforme)}`;
+  m += `\n*TOTAL : ${fmt(t.total)}*`;
+  m += `\n\n*Client* : ${nom}\n*Tél* : ${tel}\n*Zone* : ${t.zone.nom}\n*Adresse* : ${adr}`;
+  if (rem) m += `\n*Remarque* : ${rem}`;
+  m += `\n\nPaiement à la livraison.`;
+
+  // Enregistrement dans le Google Sheet (facultatif, sans bloquer la commande)
+  if (CFG.script_url) {
+    try {
+      fetch(CFG.script_url, {
+        method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          numero: num, client: nom, telephone: tel, zone: t.zone.nom, adresse: adr, remarque: rem,
+          articles: ls.map(l => `${l.qte} x ${l.nom}`).join(" ; "),
+          sous_total: t.sous, livraison: t.livraison, frais_plateforme: t.plateforme, total: t.total
+        })
+      });
+    } catch (e) {}
+  }
+  window.open("https://wa.me/" + CFG.whatsapp.replace(/\D/g, "") + "?text=" + encodeURIComponent(m), "_blank");
+}
+
+$("cats").addEventListener("click", e => {
+  const b = e.target.closest(".chip");
+  if (!b) return;
+  CAT = b.getAttribute("data-c");
+  rendreCats(); rendreCatalogue(); rendre();
+});
+$("zone").addEventListener("change", rendre);
+$("envoyer").addEventListener("click", envoyer);
+if (SHEET_ID.indexOf("COLLEZ") === 0) {
+  $("titre").textContent = "Configuration requise";
+  $("catalogue").innerHTML = '<div class="msg">Renseignez SHEET_ID dans le fichier index.html.</div>';
+} else {
+  charger();
+}
+</script>
+</body>
+</html>
