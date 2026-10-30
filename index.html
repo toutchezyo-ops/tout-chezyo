@@ -1,6 +1,473 @@
 <!DOCTYPE html>
 <html lang="fr">
+<head><!DOCTYPE html>
+<html lang="fr">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commandez sur WhatsApp</title>
+<style>
+:root{--p:#2e7d32;--t:#1b2a1b;--f:#f6faf6;--c:#ffffff;--bord:rgba(0,0,0,.14);--fs:16px;--ff:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;font-family:var(--ff);background:var(--f);color:var(--t);font-size:1rem}
+button{font:inherit;cursor:pointer;color:inherit}
+h1,h2,h3,p{margin:0}
+.gris{opacity:.68;font-size:.85rem}
+#hero{background:var(--p);color:#fff;padding:2.2rem 1rem 1.4rem;text-align:center;background-size:cover;background-position:center}
+#hero.photo-on{padding:4.5rem 1rem 1.6rem;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+#hero h1{font-size:1.5rem}
+#hero p{margin-top:.3rem;font-size:.95rem;opacity:.95}
+main{max-width:720px;margin:0 auto;padding:1rem 1rem 7rem}
+.info{display:flex;background:var(--c);border:1px solid var(--bord);border-radius:1rem;margin-top:-1.6rem;position:relative;overflow:hidden}
+.info div{flex:1;text-align:center;padding:.8rem .3rem;font-size:.85rem}
+.info div+div{border-left:1px solid var(--bord)}
+.info b{display:block;font-size:1rem}
+.note{margin:.8rem 0 0;padding:.6rem .8rem;border-radius:.7rem;background:rgba(230,160,0,.18);font-size:.85rem}
+h2{font-size:1.1rem;margin:1.4rem 0 .7rem}
+.ccard{background:var(--c);border:1px solid var(--bord);border-radius:1.2rem;overflow:hidden;margin-bottom:1rem;cursor:pointer}
+.cimg{height:9.5rem;background-size:cover;background-position:center;position:relative;display:flex;align-items:center;justify-content:center;font-size:4rem;background-color:var(--p)}
+.cimg .chip{position:absolute;left:.7rem;top:.7rem;background:var(--p);color:#fff;border-radius:2rem;padding:.3rem .8rem;font-size:.8rem;font-weight:700}
+.cinfo{padding:.8rem 1rem}
+.cinfo h3{font-size:1.1rem}
+.cinfo .gris{margin-top:.2rem}
+.top{position:sticky;top:0;z-index:20;background:var(--f);display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-bottom:1px solid var(--bord)}
+.back{width:2.4rem;height:2.4rem;border-radius:.7rem;border:1px solid var(--bord);background:var(--c);font-size:1.2rem}
+.top h2{margin:0}
+.prod{display:flex;gap:.8rem;padding:1rem 0;border-bottom:1px solid var(--bord)}
+.ptxt{flex:1;min-width:0}
+.ptxt h3{font-size:1rem}
+.desc{font-size:.85rem;opacity:.7;margin-top:.2rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.desc.open{display:block}
+.more{display:inline-block;margin-top:.2rem;font-size:.8rem;font-weight:700;color:var(--p);cursor:pointer}
+.prix{font-weight:700;margin-top:.4rem}
+.vieux{opacity:.55;text-decoration:line-through;font-weight:400;margin-right:.4rem}
+.pimg{width:6.2rem;flex-shrink:0;text-align:center}
+.photo,.emoji{width:6.2rem;height:6.2rem;border-radius:1rem;object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:2.6rem;background:rgba(128,128,128,.15);cursor:pointer}
+.qte{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:.5rem}
+.qte button{width:2rem;height:2rem;border-radius:50%;border:1px solid var(--p);background:var(--c);color:var(--p);font-size:1.1rem;line-height:1}
+.qte .add{background:var(--p);color:#fff;font-weight:700}
+.panier,.form{background:var(--c);border:1px solid var(--bord);border-radius:1rem;padding:1rem}
+.ligne{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.4rem 0}
+.ligne.total{border-top:2px solid var(--p);margin-top:.4rem;padding-top:.7rem;font-weight:700;font-size:1.1rem;color:var(--p)}
+.vide{opacity:.6;text-align:center;padding:.7rem}
+label.l{display:block;font-size:.85rem;font-weight:700;margin:.8rem 0 .3rem}
+input.i,select.i,textarea.i{width:100%;padding:.7rem;border:1px solid var(--bord);border-radius:.6rem;font:inherit;background:var(--c);color:var(--t)}
+.jours{display:flex;gap:.5rem;overflow-x:auto;padding-bottom:.4rem}
+.jour{flex:0 0 auto;min-width:6.3rem;border:1px solid var(--bord);border-radius:.8rem;padding:.6rem .8rem;background:var(--c);text-align:left}
+.jour.on{border-color:var(--p);box-shadow:0 0 0 2px var(--p) inset}
+.jour b{display:block;font-size:.95rem}
+.opt{display:flex;gap:.6rem;align-items:flex-start;padding:.7rem;border:1px solid var(--bord);border-radius:.8rem;background:var(--c);margin-top:.5rem;cursor:pointer}
+.opt input{margin-top:.2rem;accent-color:var(--p)}
+.mm{margin-top:.6rem;padding:.8rem;border-radius:.8rem;background:rgba(128,128,128,.12);font-size:.9rem}
+.mm .num{margin:.4rem 0;padding:.5rem .7rem;background:var(--c);border-radius:.6rem;border:1px solid var(--bord)}
+.erreur{color:#d32f2f;font-size:.9rem;margin-top:.6rem;min-height:1.2rem;font-weight:600}
+.btn-wa{width:100%;margin-top:.8rem;background:#25d366;color:#fff;border:0;border-radius:.8rem;padding:.9rem;font-size:1.05rem;font-weight:700}
+.barre{position:fixed;bottom:0;left:0;right:0;background:var(--c);border-top:1px solid var(--bord);padding:.7rem 1rem;display:flex;justify-content:space-between;align-items:center;z-index:30}
+.barre button{background:var(--p);color:#fff;border:0;padding:.7rem 1.1rem;border-radius:.6rem;font-weight:700}
+#zoom{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:50;padding:1rem}
+#zoom.on{display:flex}
+#zoom img{max-width:100%;max-height:78vh;border-radius:.8rem}
+#zoom p{color:#fff;margin:.8rem 0 0;font-weight:700;text-align:center}
+#zoom small{color:#ddd;margin-top:.4rem}
+.msg{text-align:center;opacity:.7;padding:1.4rem}
+</style>
+</head>
+<body>
+
+<div id="v-home">
+  <header id="hero"><h1 id="titre">Chargement…</h1><p id="accueil"></p></header>
+  <main>
+    <div class="info" id="info"></div>
+    <div class="note" id="note" style="display:none"></div>
+    <h2>Nos catégories</h2>
+    <div id="cats-grid"><div class="msg">Chargement du catalogue…</div></div>
+  </main>
+</div>
+
+<div id="v-cat" style="display:none">
+  <div class="top"><button class="back" data-go="">←</button><h2 id="cat-titre"></h2></div>
+  <main><div id="liste"></div></main>
+</div>
+
+<div id="v-cart" style="display:none">
+  <div class="top"><button class="back" data-go="">←</button><h2>Votre panier</h2></div>
+  <main>
+    <div class="panier" id="panier"></div>
+
+    <h2>Vos informations</h2>
+    <div class="form">
+      <label class="opt" style="margin-top:0; margin-bottom:.8rem">
+        <input type="checkbox" id="pour-moi" checked> 
+        <span><b>Cette commande est pour moi</b></span>
+      </label>
+
+      <div id="bloc-autre" style="display:none; background:rgba(128,128,128,.08); padding:.8rem; border-radius:.8rem; border:1px solid var(--bord); margin-bottom:.8rem">
+        <label class="l" style="margin-top:0">Nom du destinataire</label>
+        <input class="i" id="dest-nom" placeholder="Ex. M. Jean / Maman">
+        <label class="l">Téléphone du destinataire</label>
+        <input class="i" id="dest-tel" type="tel" placeholder="Ex. 0890000000">
+      </div>
+
+      <label class="l" for="nom" style="margin-top:0">Votre Nom (Payeur)</label>
+      <input class="i" id="nom" autocomplete="name" placeholder="Ex. Marie Kabongo">
+      <label class="l" for="tel">Votre Téléphone</label>
+      <input class="i" id="tel" type="tel" autocomplete="tel" placeholder="Ex. 0812345678">
+      <label class="l" for="zone">Zone de livraison</label>
+      <select class="i" id="zone"></select>
+      <label class="l" for="adresse">Adresse précise de livraison</label>
+      <textarea class="i" id="adresse" rows="2" placeholder="Avenue, numéro, point de repère"></textarea>
+      <label class="l" for="remarque">Remarque (facultatif)</label>
+      <textarea class="i" id="remarque" rows="2" placeholder="Ex. sans piment"></textarea>
+    </div>
+
+    <h2>Quand voulez-vous être livré ?</h2>
+    <div class="jours" id="jours"></div>
+    <div id="creneaux"></div>
+
+    <h2>Paiement</h2>
+    <label class="opt"><input type="radio" name="paie" value="esp" checked> <span>💵 <b>En espèces</b> à la livraison</span></label>
+    <label class="opt"><input type="radio" name="paie" value="mm"> <span>📱 <b>Par Mobile Money</b></span></label>
+    <div class="mm" id="mm" style="display:none"></div>
+
+    <div class="erreur" id="erreur"></div>
+    <button class="btn-wa" id="envoyer">Commander sur WhatsApp</button>
+  </main>
+</div>
+
+<div id="zoom"><img id="zoom-img" alt=""><p id="zoom-nom"></p><small>Touchez pour fermer</small></div>
+
+<div class="barre" id="barre">
+  <div><strong id="barre-total">0 $</strong><br><small id="barre-nb">Panier vide</small></div>
+  <button data-go="#panier">Voir le panier</button>
+</div>
+
+<script>
+const SHEET_ID = "1JC8d68NzRRB1JmLgfy0-xU_aFyXHa-TZ6IAw_tIGbAY";
+const WHATSAPP_PAR_DEFAUT = "243978544961";
+const FRAIS_PAR_DEFAUT = 1;
+const PAIEMENTS_PAR_DEFAUT = [
+  { op: "Orange Money", num: "+243 847486727", nom: "Théo Imani" },
+  { op: "Mobile Money", num: "+243 841299463", nom: "Matunga Raphaël" }
+];
+
+let CFG = { boutique: "TouT ChezYo", accueil: "Tout chez toi, livré à Kinshasa · Paiement à la livraison", whatsapp: "", devise: "$", frais_plateforme: 0, script_url: "", duree: 45, ouv: 10, fer: 21, jours: 7, categories: "" };
+let PRODUITS = [], ZONES = [], CATS = [], PAIEMENTS = [];
+let JOUR = 0, CRENEAU = "std";
+let panier = {};
+try { panier = JSON.parse(localStorage.getItem("panier_boutique") || "{}"); } catch (e) { panier = {}; }
+
+const $ = id => document.getElementById(id);
+const nombre = v => parseFloat(String(v).replace(",", ".").replace(/[^\d.]/g, ""));
+const fmt = n => (Math.round(n * 100) / 100).toString().replace(".", ",") + " " + CFG.devise;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const urlOk = u => { u = String(u || "").trim(); return /^https:\/\/[^\s"'<>()]+$/.test(u) ? u : ""; };
+const hexOk = v => /^#[0-9a-fA-F]{6}$/.test(String(v || "").trim());
+const titreCat = c => (c.toLowerCase() === "promotion" ? "🔥 " : "") + esc(c);
+const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16) / 255).map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };
+
+function parseCSV(t) {
+  const rows = []; let r = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (q) { if (c === '"') { if (t[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ",") { r.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") { if (c === "\r" && t[i + 1] === "\n") i++; r.push(f); rows.push(r); r = []; f = ""; }
+    else f += c;
+  }
+  if (f !== "" || r.length) { r.push(f); rows.push(r); }
+  return rows;
+}
+
+async function lireFeuille(nom) {
+  const url = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(nom);
+  const rep = await fetch(url);
+  if (!rep.ok) throw new Error("Feuille " + nom + " introuvable");
+  return parseCSV(await rep.text());
+}
+
+function appliquerStyle() {
+  const r = document.documentElement.style;
+  const p = hexOk(CFG.couleur) ? CFG.couleur : "#2e7d32", t = hexOk(CFG.couleur_texte) ? CFG.couleur_texte : "#1b2a1b", f = hexOk(CFG.couleur_fond) ? CFG.couleur_fond : "#f6faf6";
+  r.setProperty("--p", p); r.setProperty("--t", t); r.setProperty("--f", f);
+  r.setProperty("--c", lum(f) > 0.5 ? "#ffffff" : "#1f1f1f");
+  r.setProperty("--bord", lum(f) > 0.5 ? "rgba(0,0,0,.14)" : "rgba(255,255,255,.2)");
+  r.setProperty("--fs", { petit: "14px", grand: "18px" }[CFG.taille_texte] || "16px");
+  const polices = { arrondie: '"Trebuchet MS","Segoe UI",Arial,sans-serif', classique: 'Georgia,"Times New Roman",serif', moderne: '"Segoe UI",Roboto,Arial,sans-serif' };
+  if (polices[CFG.police]) r.setProperty("--ff", polices[CFG.police]);
+}
+
+async function charger() {
+  try {
+    const [conf, prods, zones] = await Promise.all([lireFeuille("Config"), lireFeuille("Produits"), lireFeuille("Zones")]);
+    conf.forEach(r => { if (r[0] && (r[1] || "").trim() !== "") CFG[r[0].trim().toLowerCase()] = (r[1] || "").trim(); });
+    const wa = String(CFG.whatsapp || "").trim();
+    if (/^[\d.,]+e\+?\d+$/i.test(wa)) CFG.whatsapp = Number(wa.replace(",", ".")).toFixed(0);
+    if (!String(CFG.whatsapp || "").replace(/\D/g, "")) CFG.whatsapp = WHATSAPP_PAR_DEFAUT;
+    const aFrais = conf.some(r => (r[0] || "").trim().toLowerCase() === "frais_plateforme" && (r[1] || "").trim() !== "");
+    CFG.frais_plateforme = aFrais ? (nombre(CFG.frais_plateforme) || 0) : FRAIS_PAR_DEFAUT;
+    CFG.duree = parseInt(CFG.duree_livraison, 10) > 0 ? parseInt(CFG.duree_livraison, 10) : 45;
+    const ouv = parseFloat(CFG.heure_ouverture), fer = parseFloat(CFG.heure_fermeture);
+    CFG.ouv = isNaN(ouv) ? 10 : ouv; CFG.fer = isNaN(fer) ? 21 : fer;
+    CFG.jours = Math.min(14, Math.max(1, parseInt(CFG.jours_avance, 10) || 7));
+    PAIEMENTS = [1, 2].map((n, i) => ({ op: CFG["paiement" + n + "_operateur"] || PAIEMENTS_PAR_DEFAUT[i].op, num: CFG["paiement" + n + "_numero"] || PAIEMENTS_PAR_DEFAUT[i].num, nom: CFG["paiement" + n + "_nom"] || PAIEMENTS_PAR_DEFAUT[i].nom })).filter(x => x.num);
+    PRODUITS = prods.map(r => ({ id: (r[0] || "").trim(), cat: (r[1] || "Autres").trim() || "Autres", emoji: r[2] || "🍽️", nom: (r[3] || "").trim(), desc: r[4] || "", prix: nombre(r[5]), dispo: (r[6] || "oui").trim().toLowerCase(), image: urlOk(r[7]), ancien: nombre(r[8]) }))
+      .filter(p => p.id && p.nom && !isNaN(p.prix) && p.dispo !== "non");
+    ZONES = zones.map(r => ({ nom: (r[0] || "").trim(), frais: nombre(r[1]) })).filter(z => z.nom && !isNaN(z.frais));
+    if (!PRODUITS.length || !ZONES.length) throw new Error("Données vides");
+    CATS = [];
+    String(CFG.categories || "").split("|").map(c => c.trim()).forEach(c => { if (c && PRODUITS.some(p => p.cat === c) && CATS.indexOf(c) < 0) CATS.push(c); });
+    PRODUITS.forEach(p => { if (CATS.indexOf(p.cat) < 0) CATS.push(p.cat); });
+    const ip = CATS.findIndex(c => c.toLowerCase() === "promotion");
+    if (ip > 0) CATS.unshift(CATS.splice(ip, 1)[0]);
+    appliquerStyle();
+    document.title = CFG.boutique;
+    $("titre").textContent = CFG.boutique;
+    $("accueil").textContent = CFG.accueil;
+    const ba = urlOk(CFG.image_accueil);
+    if (ba) { const h = $("hero"); h.classList.add("photo-on"); h.style.backgroundImage = 'linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.5)),url("' + ba + '")'; }
+    const mini = Math.min.apply(null, ZONES.map(z => z.frais));
+    $("info").innerHTML = `<div>🛵<b>${fmt(mini)}</b>Livraison dès</div><div>⏱️<b>~${CFG.duree} min</b>Délai</div><div>🕒<b>${CFG.ouv}h – ${CFG.fer}h</b>Tous les jours</div>`;
+    const h = new Date().getHours() + new Date().getMinutes() / 60;
+    if (h < CFG.ouv || h >= CFG.fer) { const n = $("note"); n.style.display = "block"; n.textContent = "ℹ️ Livraisons de " + CFG.ouv + "h à " + CFG.fer + "h. Vous pouvez commander maintenant : votre commande sera traitée dès l'ouverture."; }
+    $("zone").innerHTML = ZONES.map((z, i) => `<option value="${i}">${esc(z.nom)} (+${fmt(z.frais)})</option>`).join("");
+    Object.keys(panier).forEach(id => { if (!PRODUITS.some(p => p.id === id)) delete panier[id]; });
+    rendreCats(); rendreJours(); rendrePaiement(); route(); majTout();
+    compterVisite();
+  } catch (e) {
+    $("titre").textContent = "Boutique indisponible";
+    $("cats-grid").innerHTML = '<div class="msg">Impossible de charger le catalogue. Réessayez dans un instant.</div>';
+  }
+}
+
+function sauver() { try { localStorage.setItem("panier_boutique", JSON.stringify(panier)); } catch (e) {} }
+function changer(id, d) { panier[id] = (panier[id] || 0) + d; if (panier[id] <= 0) delete panier[id]; sauver(); majTout(); }
+function lignes() { return PRODUITS.filter(p => panier[p.id]).map(p => ({ ...p, qte: panier[p.id] })); }
+
+function totaux() {
+  const sous = lignes().reduce((s, l) => s + l.prix * l.qte, 0);
+  const zone = ZONES[$("zone").value] || ZONES[0] || { nom: "", frais: 0 };
+  const livraison = sous > 0 ? zone.frais : 0;
+  const plateforme = sous > 0 ? CFG.frais_plateforme : 0;
+  return { sous, zone, livraison, plateforme, total: sous + livraison + plateforme };
+}
+
+/* ---------- accueil : cartes de catégories ---------- */
+function rendreCats() {
+  $("cats-grid").innerHTML = CATS.map(c => {
+    const ps = PRODUITS.filter(p => p.cat === c);
+    const img = urlOk(CFG["catimg:" + c.toLowerCase()]) || (ps.find(p => p.image) || {}).image || "";
+    const emo = CFG["catemoji:" + c.toLowerCase()] || (ps[0] || {}).emoji || "🍽️";
+    const style = img ? ` style="background-image:url('${esc(img)}')"` : "";
+    return `<div class="ccard" data-c="${esc(c)}"><div class="cimg"${style}>${img ? "" : esc(emo)}<span class="chip">${titreCat(c)}</span></div>` +
+      `<div class="cinfo"><h3>${titreCat(c)}</h3><div class="gris">${ps.length} plat(s)</div><div class="gris">⏱️ ~${CFG.duree} min</div></div></div>`;
+  }).join("");
+}
+
+/* ---------- page d'une catégorie ---------- */
+function carte(p) {
+  const long = p.desc.length > 70;
+  return `<div class="prod"><div class="ptxt"><h3>${esc(p.nom)}</h3>` +
+    `<div class="desc" id="d${esc(p.id)}">${esc(p.desc)}</div>${long ? `<a class="more" data-more="${esc(p.id)}">Voir plus</a>` : ""}` +
+    `<div class="prix">${p.ancien > p.prix ? `<span class="vieux">${fmt(p.ancien)}</span>` : ""}${fmt(p.prix)}</div></div>` +
+    `<div class="pimg">${p.image ? `<img class="photo" src="${esc(p.image)}" data-nom="${esc(p.nom)}" alt="${esc(p.nom)}" loading="lazy" onerror="this.remove()">` : `<div class="emoji">${esc(p.emoji)}</div>`}` +
+    `<div class="qte" id="q${esc(p.id)}"></div></div></div>`;
+}
+
+function rendreCategorie(c) {
+  $("cat-titre").innerHTML = titreCat(c);
+  $("liste").innerHTML = PRODUITS.filter(p => p.cat === c).map(carte).join("") || '<div class="msg">Aucun plat dans cette catégorie.</div>';
+  majTout();
+}
+
+function majQte(p) {
+  const q = panier[p.id] || 0, el = $("q" + p.id);
+  if (!el) return;
+  el.innerHTML = q
+    ? `<button data-q="${esc(p.id)}" data-d="-1">−</button><strong>${q}</strong><button data-q="${esc(p.id)}" data-d="1">+</button>`
+    : `<button class="add" data-q="${esc(p.id)}" data-d="1">+</button>`;
+}
+
+/* ---------- panier ---------- */
+function majTout() {
+  PRODUITS.forEach(majQte);
+  const ls = lignes(), t = totaux();
+  if (!ls.length) {
+    $("panier").innerHTML = '<div class="vide">Votre panier est vide</div>';
+  } else {
+    $("panier").innerHTML =
+      ls.map(l => `<div class="ligne"><span>${esc(l.nom)}</span><span class="qte" style="margin:0"><button data-q="${esc(l.id)}" data-d="-1">−</button><strong>${l.qte}</strong><button data-q="${esc(l.id)}" data-d="1">+</button></span><span>${fmt(l.prix * l.qte)}</span></div>`).join("") +
+      `<div class="ligne"><span>Sous-total</span><span>${fmt(t.sous)}</span></div>` +
+      `<div class="ligne"><span>Livraison (${esc(t.zone.nom)})</span><span>${fmt(t.livraison)}</span></div>` +
+      (CFG.frais_plateforme ? `<div class="ligne"><span>Frais de plateforme</span><span>${fmt(t.plateforme)}</span></div>` : "") +
+      `<div class="ligne total"><span>TOTAL</span><span>${fmt(t.total)}</span></div>`;
+  }
+  const nb = ls.reduce((s, l) => s + l.qte, 0);
+  $("barre-total").textContent = fmt(t.total);
+  $("barre-nb").textContent = nb ? nb + " article(s)" : "Panier vide";
+  rendrePaiement(true);
+}
+
+/* ---------- livraison : jour et créneau ---------- */
+function creneaux(j) {
+  const out = [], now = new Date();
+  const min = j === 0 ? now.getHours() * 60 + now.getMinutes() + CFG.duree : 0;
+  for (let m = Math.round(CFG.ouv * 60); m <= Math.round(CFG.fer * 60); m += 30) {
+    if (m >= min) out.push(("0" + Math.floor(m / 60)).slice(-2) + ":" + ("0" + (m % 60)).slice(-2));
+  }
+  return out;
+}
+function libJour(j) {
+  if (j === 0) return "Aujourd'hui";
+  if (j === 1) return "Demain";
+  const d = new Date(); d.setDate(d.getDate() + j);
+  return d.toLocaleDateString("fr-FR", { weekday: "long" }).replace(/^./, c => c.toUpperCase());
+}
+function dateJour(j) { const d = new Date(); d.setDate(d.getDate() + j); return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }); }
+function rendreJours() {
+  let h = "";
+  for (let j = 0; j < CFG.jours; j++) h += `<button class="jour${j === JOUR ? " on" : ""}" data-j="${j}"><b>${esc(libJour(j))}</b><span class="gris">${esc(dateJour(j))}</span></button>`;
+  $("jours").innerHTML = h;
+  const cr = creneaux(JOUR);
+  let o = "";
+  if (JOUR === 0) o += `<label class="opt"><input type="radio" name="cr" value="std"${CRENEAU === "std" ? " checked" : ""}><span><b>Standard</b><br><span class="gris">Livré dans les plus brefs délais (~${CFG.duree} min)</span></span></label>`;
+  o += cr.map(c => `<label class="opt"><input type="radio" name="cr" value="${c}"${CRENEAU === c ? " checked" : ""}><span><b>${c.replace(":", "h")}</b></span></label>`).join("");
+  if (JOUR > 0 && !cr.length) o = '<div class="vide">Aucun créneau.</div>';
+  $("creneaux").innerHTML = o;
+}
+function textePrevue() {
+  const lib = libJour(JOUR) + (JOUR > 1 ? " " + dateJour(JOUR) : "");
+  return lib + " · " + (CRENEAU === "std" ? "Standard (~" + CFG.duree + " min)" : "à " + CRENEAU.replace(":", "h"));
+}
+
+/* ---------- paiement ---------- */
+function rendrePaiement(garder) {
+  const mm = document.querySelector('input[name="paie"][value="mm"]');
+  const box = $("mm");
+  if (!mm || !box) return;
+  if (!mm.checked) { box.style.display = "none"; return; }
+  if (garder && box.dataset.ok) { box.querySelector("b.tot").textContent = fmt(totaux().total); return; }
+  box.dataset.ok = "1";
+  box.style.display = "block";
+  box.innerHTML = `Envoyez le total (<b class="tot">${fmt(totaux().total)}</b>) à l'un de ces numéros :` +
+    PAIEMENTS.map(x => `<div class="num"><b>${esc(x.op)}</b> : ${esc(x.num)}<br><span class="gris">${esc(x.nom)}</span></div>`).join("") +
+    `<label class="l">Référence de la transaction</label><input class="i" id="ref" placeholder="Ex. numéro reçu par SMS">`;
+}
+
+/* ---------- envoi ---------- */
+function envoyer() {
+  const ls = lignes(), t = totaux();
+  const nom = $("nom").value.trim(), tel = $("tel").value.trim(), adr = $("adresse").value.trim(), rem = $("remarque").value.trim();
+  const pourMoi = $("pour-moi").checked;
+  const destNom = pourMoi ? "" : $("dest-nom").value.trim();
+  const destTel = pourMoi ? "" : $("dest-tel").value.trim();
+  
+  const mmChoisi = document.querySelector('input[name="paie"]:checked').value === "mm";
+  const ref = mmChoisi && $("ref") ? $("ref").value.trim() : "";
+  const err = $("erreur");
+
+  if (!ls.length) { err.textContent = "Ajoutez au moins un plat au panier."; return; }
+  if (!nom || !tel || !adr) { err.textContent = "Merci de remplir vos coordonnées (nom, téléphone, adresse)."; return; }
+  if (!pourMoi && (!destNom || !destTel)) { err.textContent = "Merci de renseigner le nom et le téléphone du destinataire."; return; }
+  if (JOUR > 0 && CRENEAU === "std") { err.textContent = "Choisissez une heure de livraison."; return; }
+  if (mmChoisi && !ref) { err.textContent = "Entrez la référence de votre paiement Mobile Money."; return; }
+  if (!CFG.whatsapp) { err.textContent = "Numéro WhatsApp non configuré."; return; }
+  err.textContent = "";
+
+  const prevue = textePrevue();
+  const paiement = mmChoisi ? "Mobile Money · réf " + ref : "Espèces à la livraison";
+  const num = String(Math.floor(10000 + Math.random() * 90000));
+  
+  let m = `*Nouvelle commande ${CFG.boutique}* N° ${num}\n\n`;
+  m += ls.map(l => `• ${l.qte} × ${l.nom} : ${fmt(l.prix * l.qte)}`).join("\n");
+  m += `\n\nSous-total : ${fmt(t.sous)}`;
+  m += `\nLivraison (${t.zone.nom}) : ${fmt(t.livraison)}`;
+  if (CFG.frais_plateforme) m += `\nFrais de plateforme : ${fmt(t.plateforme)}`;
+  m += `\n*TOTAL : ${fmt(t.total)}*`;
+
+  m += `\n\n*Client (Payeur)* : ${nom} (${tel})`;
+  if (!pourMoi) {
+    m += `\n🎁 *Pour le destinataire* : ${destNom} - Tél : ${destTel}`;
+  }
+  m += `\n*Zone* : ${t.zone.nom}\n*Adresse* : ${adr}`;
+  if (rem) m += `\n*Remarque* : ${rem}`;
+  m += `\n*Livraison* : ${prevue}\n*Paiement* : ${paiement}`;
+
+  if (CFG.script_url) {
+    try {
+      fetch(CFG.script_url, {
+        method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          numero: num, client: nom, telephone: tel, zone: t.zone.nom, adresse: adr, remarque: rem,
+          articles: ls.map(l => `${l.qte} x ${l.nom}`).join(" ; "), lignes: ls.map(l => ({ id: l.id, qte: l.qte })),
+          livraison_prevue: prevue, paiement: paiement,
+          sous_total: t.sous, livraison: t.livraison, frais_plateforme: t.plateforme, total: t.total
+        })
+      });
+    } catch (e) {}
+  }
+  window.open("https://wa.me/" + CFG.whatsapp.replace(/\D/g, "") + "?text=" + encodeURIComponent(m), "_blank");
+}
+
+function compterVisite() {
+  try {
+    const j = new Date().toISOString().slice(0, 10);
+    if (!CFG.script_url || localStorage.getItem("visite_jour") === j) return;
+    localStorage.setItem("visite_jour", j);
+    fetch(CFG.script_url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ type: "visite" }) });
+  } catch (e) {}
+}
+
+/* ---------- navigation par #adresse ---------- */
+function route() {
+  const h = decodeURIComponent(location.hash || "");
+  const vues = { home: $("v-home"), cat: $("v-cat"), cart: $("v-cart") };
+  let v = "home", c = "";
+  if (h === "#panier") v = "cart";
+  else if (h.indexOf("#c/") === 0 && CATS.indexOf(h.slice(3)) >= 0) { v = "cat"; c = h.slice(3); }
+  Object.keys(vues).forEach(k => vues[k].style.display = k === v ? "block" : "none");
+  $("barre").style.display = v === "cart" ? "none" : "flex";
+  if (v === "cat") rendreCategorie(c);
+  if (v === "cart") { rendreJours(); majTout(); }
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+
+document.addEventListener("click", e => {
+  const z = $("zoom");
+  const t = e.target;
+  const im = t.closest && t.closest("img.photo");
+  if (im) { $("zoom-img").src = im.src; $("zoom-nom").textContent = im.dataset.nom || ""; z.classList.add("on"); return; }
+  if (z.classList.contains("on")) { z.classList.remove("on"); return; }
+  const q = t.closest("[data-q]"); if (q) { changer(q.dataset.q, Number(q.dataset.d)); return; }
+  const mo = t.closest("[data-more]"); if (mo) { const d = $("d" + mo.dataset.more); d.classList.toggle("open"); mo.textContent = d.classList.contains("open") ? "Voir moins" : "Voir plus"; return; }
+  const cc = t.closest(".ccard"); if (cc) { location.hash = "#c/" + encodeURIComponent(cc.dataset.c); return; }
+  const g = t.closest("[data-go]"); if (g) { location.hash = g.dataset.go; if (g.dataset.go === "") history.replaceState(null, "", location.pathname + location.search); route(); return; }
+  const j = t.closest("[data-j]"); if (j) { JOUR = Number(j.dataset.j); CRENEAU = JOUR === 0 ? "std" : (creneaux(JOUR)[0] || "std"); rendreJours(); return; }
+});
+
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.id === "pour-moi") {
+    $("bloc-autre").style.display = t.checked ? "none" : "block";
+  }
+  else if (t.name === "cr") CRENEAU = t.value;
+  else if (t.name === "paie") { $("mm").dataset.ok = ""; rendrePaiement(); }
+  else if (t.id === "zone") majTout();
+});
+
+$("envoyer").addEventListener("click", envoyer);
+
+if (SHEET_ID.indexOf("COLLEZ") === 0) {
+  $("titre").textContent = "Configuration requise";
+} else {
+  charger();
+}
+</script>
+</body>
+</html>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Commandez sur WhatsApp</title>
